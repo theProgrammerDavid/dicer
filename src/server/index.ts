@@ -12,10 +12,12 @@ class Master {
     io: Server<DefaultEventsMap, DefaultEventsMap>;
     clients: Client[];
     slaves: Slave[];
+    count: number;
     constructor() {
         /** for the FUTURE */
         this.clients = [];
         this.slaves = [];
+        this.count = 0;
         this.server = createServer();
         this.io = new Server(this.server);
         this.setupHandlers();
@@ -23,20 +25,35 @@ class Master {
 
     setupHandlers() {
         this.io.on('connection', client => {
+            let type = "unkown";
+            let slaveId = "";
             client.on('client:register', data => {
+                type="client";
                 // Register a client add it on the array
              });
             client.on('client:execute', async (data: SlaveExecute, cb) => {
-                // Select a random slave and send master:execute event to it, and then
-                // send back response to this client
-                cb(await this.slaves[0].execute(data));
+                cb(await this.slaves[this.count % this.slaves.length].execute(data));
+                this.count += 1;
             });
-            client.on('slave:register', (data: SlaveRegiser) => { 
+            client.on('slave:register', (data: SlaveRegiser) => {
                 const newSlave = new Slave(data.id, client);
+                type = "slave";
+                slaveId = data.id;
                 this.slaves.push(newSlave);
                 console.log(`Registered new slave: ${newSlave.id}`);
             });
-            client.on('disconnect', () => { });
+            client.on('disconnect', () => { 
+                if (type === "slave") {
+                    for (let i = 0; i < this.slaves.length; i++) {
+                        const slave = this.slaves[i];
+                        if (slave.id === slaveId) {
+                            console.log(`Removing slave ${slaveId} due to disconnect`);
+                            this.slaves.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            });
         });
     }
 
