@@ -7,3 +7,7 @@ export interface SlaveResponse {
     time: number;
     error?: any
 };
+
+export interface SlaveRegiser {
+    id: string;
+}

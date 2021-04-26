@@ -3,6 +3,7 @@ import { createServer, Server as HTTPServer } from 'http';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import Slave from './slave';
 import Client from './client';
+import { SlaveExecute, SlaveRegiser } from '../protocol';
 
 const PORT = parseInt(process.env.PORT || '3000', 10) ;
 
@@ -25,13 +26,15 @@ class Master {
             client.on('client:register', data => {
                 // Register a client add it on the array
              });
-            client.on('client:execute', data => {
+            client.on('client:execute', async (data: SlaveExecute, cb) => {
                 // Select a random slave and send master:execute event to it, and then
                 // send back response to this client
+                cb(await this.slaves[0].execute(data));
             });
-            client.on('slave:register', data => { 
-                // Add slave to array of slaves
-                console.log(data);
+            client.on('slave:register', (data: SlaveRegiser) => { 
+                const newSlave = new Slave(data.id, client);
+                this.slaves.push(newSlave);
+                console.log(`Registered new slave: ${newSlave.id}`);
             });
             client.on('disconnect', () => { });
         });

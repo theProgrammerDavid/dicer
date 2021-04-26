@@ -18,7 +18,7 @@ socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) =
     // Ececute function send back response
     try {
         let t0: number = performance.now();
-
+        console.log(data.fn);
         let fn = Function(data.fn);
         let resp: SlaveResponse = fn(...data.args);
 
@@ -27,7 +27,7 @@ socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) =
         cb({ result: resp, time: t1 - t0 })
     }
     catch (e) {
+        console.log(e);
         cb({ result: null, time: 0, error: e })
-
     }
 });

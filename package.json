@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ts-node-dev src/test/index.ts",
     "start:server": "ts-node-dev src/server/index.ts",
     "start:slave": "ts-node-dev src/slave/index.ts"
   },
