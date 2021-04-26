@@ -16,12 +16,18 @@ socket.emit("slave:register", {
 
 socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) => void) => {
     // Ececute function send back response
-    let t0: number = performance.now();
+    try {
+        let t0: number = performance.now();
 
-    let fn = Function(data.fn);
-    let resp: SlaveResponse = fn(...data.args);
+        let fn = Function(data.fn);
+        let resp: SlaveResponse = fn(...data.args);
 
-    let t1 = performance.now();
+        let t1 = performance.now();
 
-    cb({ result: resp, time: t1 - t0 })
+        cb({ result: resp, time: t1 - t0 })
+    }
+    catch (e) {
+        cb({ result: null, time: 0, error: e })
+
+    }
 });

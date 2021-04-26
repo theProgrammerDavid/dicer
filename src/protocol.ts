@@ -5,4 +5,5 @@ export interface SlaveExecute {
 export interface SlaveResponse {
     result: any;
     time: number;
+    error?: any
 };
