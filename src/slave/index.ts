@@ -18,8 +18,8 @@ socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) =
     // Ececute function send back response
     try {
         let t0: number = performance.now();
-        console.log(data.fn);
-        let fn = Function(data.fn);
+        console.log(data.args);
+        let fn = Function(`return ${data.fn}`)();
         let resp: SlaveResponse = fn(...data.args);
 
         let t1 = performance.now();
