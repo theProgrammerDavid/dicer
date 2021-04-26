@@ -32,8 +32,8 @@ class Master {
                 // Register a client add it on the array
              });
             client.on('client:execute', async (data: SlaveExecute, cb) => {
-                cb(await this.slaves[this.count % this.slaves.length].execute(data));
                 this.count += 1;
+                cb(await this.slaves[this.count % this.slaves.length].execute(data));
             });
             client.on('slave:register', (data: SlaveRegiser) => {
                 const newSlave = new Slave(data.id, client);

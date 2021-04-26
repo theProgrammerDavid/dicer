@@ -12,7 +12,9 @@ class Job {
 }
 
 async function main() {
-    const res = await Job.square(2);
+    const res = await Promise.all([...Array(5).keys()].map((i) =>
+        Job.square(i)
+    ));
     console.log(res);
 }
 

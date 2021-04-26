@@ -16,9 +16,9 @@ socket.emit("slave:register", {
 
 socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) => void) => {
     // Ececute function send back response
+    console.log(`Slave-${slaveId} executing for fn: ${data.fn} args: ${data.args}`);
     try {
         let t0: number = performance.now();
-        console.log(data.args);
         let fn = Function(`return ${data.fn}`)();
         let resp: SlaveResponse = fn(...data.args);
 
