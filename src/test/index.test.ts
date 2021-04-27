@@ -1,10 +1,11 @@
 import assert from 'assert';
-import Library from '../library';
+import Library, {testingEnv} from '../library';
 import { SlaveResponse } from '../protocol';
 
 const masterEndpoint = process.env.MASTER || "http://localhost:3000";
 
 const lib = new Library(masterEndpoint);
+testingEnv();
 
 class Job {
     @lib.exec

@@ -1,10 +1,17 @@
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { SlaveExecute, SlaveResponse } from "../protocol";
+import Master from '../server';
+import Slave from '../slave'
 
+const masterEndpoint = process.env.MASTER || "http://localhost:3000";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
+export const testingEnv = () => {
+    let master = new Master();
+    let slave = new Slave(masterEndpoint);
+}
 export default class Library {
     constructor(masterEndpoint: string) {
         socket = io(masterEndpoint);

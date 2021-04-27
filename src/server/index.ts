@@ -7,7 +7,7 @@ import { SlaveExecute, SlaveRegiser } from '../protocol';
 
 const PORT = parseInt(process.env.PORT || '3000', 10) ;
 
-class Master {
+export default class Master {
     server: HTTPServer;
     io: Server<DefaultEventsMap, DefaultEventsMap>;
     clients: Client[];

@@ -1,33 +1,44 @@
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { nanoid } from 'nanoid'
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { SlaveExecute, SlaveResponse } from "../protocol";
 const { performance } = require('perf_hooks');
 
-const MASTER = process.env.MASTER || "http://localhost:3000";
-const slaveId = `slave-${nanoid(6)}`;
+export default class Slave {
+    slaveId: string;
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+    constructor(masterEndpoint: string) {
+        this.slaveId = `slave-${nanoid(6)}`;
+        this.socket = io(masterEndpoint);
+        console.log(`Slave ID: ${this.slaveId} registering on master ${masterEndpoint}`);
 
-const socket = io(MASTER);
-
-console.log(`Slave ID: ${slaveId} registering on master ${MASTER}`);
-
-socket.emit("slave:register", {
-    id: slaveId,
-});
-
-socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) => void) => {
-    // Ececute function send back response
-    console.log(`Slave-${slaveId} executing for fn: ${data.fn} args: ${data.args}`);
-    try {
-        let t0: number = performance.now();
-        let fn = Function(`return ${data.fn}`)();
-        let resp: SlaveResponse = fn(...data.args);
-
-        let t1 = performance.now();
-
-        cb({ result: resp, time: t1 - t0 })
+        this.setupSlave();
     }
-    catch (e) {
-        console.log(e);
-        cb({ result: null, time: 0, error: e })
+
+    setupSlave() {
+        this.socket.emit("slave:register", {
+            id: this.slaveId,
+        });
+        this.socket.on("master:execute", (data: SlaveExecute, cb: (response: SlaveResponse) => void) => {
+            // Ececute function send back response
+            console.log(`Slave-${this.slaveId} executing for fn: ${data.fn} args: ${data.args}`);
+            try {
+                let t0: number = performance.now();
+                let fn = Function(`return ${data.fn}`)();
+                let resp: SlaveResponse = fn(...data.args);
+
+                let t1 = performance.now();
+
+                cb({ result: resp, time: t1 - t0 })
+            }
+            catch (e) {
+                console.log(e);
+                cb({ result: null, time: 0, error: e })
+            }
+        });
     }
-});
+}
+
+
+const s = new Slave(process.env.MASTER || "http://localhost:3000");
+
