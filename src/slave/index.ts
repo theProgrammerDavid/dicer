@@ -1,14 +1,16 @@
 import { io, Socket } from "socket.io-client";
-import { nanoid } from 'nanoid'
+import { customAlphabet } from 'nanoid'
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { SlaveExecute, SlaveResponse } from "../protocol";
 const { performance } = require('perf_hooks');
+
+const nanoid = customAlphabet('1234567890', 8)
 
 export default class Slave {
     slaveId: string;
     socket: Socket<DefaultEventsMap, DefaultEventsMap>;
     constructor(masterEndpoint: string) {
-        this.slaveId = `slave-${nanoid(6)}`;
+        this.slaveId = `${nanoid()}`;
         this.socket = io(masterEndpoint);
         console.log(`Slave ID: ${this.slaveId} registering on master ${masterEndpoint}`);
 

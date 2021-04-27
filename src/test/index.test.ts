@@ -16,15 +16,24 @@ class Job {
     static cube(x: number): any {
         return x ** 3;
     }
+
+    @lib.exec
+    static sqrt(x:number):any{
+        return Math.sqrt(x);
+    }
 }
 
 describe('Simple Math Test', () => {
-    it('should return 4', async () => {
+    it('Square of 2', async () => {
         const res: SlaveResponse = await Job.square(2)
         assert.strictEqual(res.result, 4);
     });
-    it('should return 27', async () => {
+    it('Cube of 3', async () => {
         const res: SlaveResponse = await Job.cube(3)
         assert.strictEqual(res.result, 27);
+    });
+    it('Sqrt of 9', async () => {
+        const res: SlaveResponse = await Job.sqrt(9)
+        assert.strictEqual(res.result, 3);
     });
 });
