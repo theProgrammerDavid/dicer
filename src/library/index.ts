@@ -13,7 +13,7 @@ export default class Library {
         propertyKey: string, // Name of the method called
         descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
-        descriptor.value = (...args: any[]): Promise<any> => {
+        descriptor.value = (...args: any[]): Promise<SlaveResponse> => {
             return new Promise((resolve, reject) => {
                 const execMsg: SlaveExecute = {
                     fn: originalMethod.toString(),

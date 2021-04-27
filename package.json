@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "ts-node-dev src/test/index.ts",
+    "test": "mocha -r ts-node/register src/test/*.test.ts",
+    "start:test": "ts-node-dev src/test/index.ts",
     "start:server": "ts-node-dev src/server/index.ts",
     "start:slave": "ts-node-dev src/slave/index.ts"
   },
@@ -12,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/theProgrammerDavid/hpc-project.git"
   },
-  "author": "",
+  "author": "thebongy, theProgrammerDavid",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/theProgrammerDavid/hpc-project/issues"
@@ -24,8 +25,11 @@
     "socket.io-client": "^4.0.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.17",
+    "@types/mocha": "^8.2.2",
     "@types/node": "^14.14.41",
     "@types/socket.io": "^2.1.13",
+    "mocha": "^8.3.2",
     "ts-node": "^9.1.1",
     "ts-node-dev": "^1.1.6"
   }
