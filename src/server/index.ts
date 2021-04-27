@@ -3,7 +3,7 @@ import { createServer, Server as HTTPServer } from 'http';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import Slave from './slave';
 import Client from './client';
-import { SlaveExecute, SlaveRegiser } from '../protocol';
+import { SlaveExecute, SlaveRegister } from '../protocol';
 
 const PORT = parseInt(process.env.PORT || '3000', 10) ;
 
@@ -25,7 +25,7 @@ export default class Master {
 
     setupHandlers() {
         this.io.on('connection', client => {
-            let type = "unkown";
+            let type = "unknown";
             let slaveId = "";
             client.on('client:register', data => {
                 type="client";
@@ -35,7 +35,7 @@ export default class Master {
                 this.count += 1;
                 cb(await this.slaves[this.count % this.slaves.length].execute(data));
             });
-            client.on('slave:register', (data: SlaveRegiser) => {
+            client.on('slave:register', (data: SlaveRegister) => {
                 const newSlave = new Slave(data.id, client);
                 type = "slave";
                 slaveId = data.id;

@@ -8,6 +8,6 @@ export interface SlaveResponse {
     error?: any
 };
 
-export interface SlaveRegiser {
+export interface SlaveRegister {
     id: string;
 }
