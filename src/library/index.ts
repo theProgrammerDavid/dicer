@@ -23,7 +23,7 @@ export default class Library {
                     if (res.error) {
                         reject(res.error);
                     } else {
-                        resolve(res.result);
+                        resolve(res);
                     }
                 });
             });
