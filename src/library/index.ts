@@ -4,13 +4,11 @@ import { SlaveExecute, SlaveResponse } from "../protocol";
 import Master from '../server';
 import Slave from '../slave'
 
-const masterEndpoint = process.env.MASTER || "http://localhost:3000";
-
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export const testingEnv = () => {
     let master = new Master();
-    let slave = new Slave(masterEndpoint);
+    let slave = new Slave(process.env.MASTER || "http://localhost:3000");
 }
 export default class Library {
     constructor(masterEndpoint: string) {
