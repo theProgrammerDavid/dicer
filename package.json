@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --exit -r ts-node/register src/test/*.test.ts",
+    "test": "MODE=testing mocha --exit -r ts-node/register src/test/*.test.ts",
     "start:test": "ts-node-dev src/test/index.ts",
     "start:server": "ts-node-dev src/server/index.ts",
     "start:slave": "ts-node-dev src/slave/index.ts"

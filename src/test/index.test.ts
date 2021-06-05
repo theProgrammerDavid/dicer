@@ -1,12 +1,20 @@
 import assert from "assert";
-import Library, { testingEnv } from "../library";
+import Library from "../library";
 import { SlaveResponse } from "../protocol";
-const { performance } = require("perf_hooks");
+import Master from "../server";
+import Slave from "../slave";
 
 const masterEndpoint = process.env.MASTER || "http://localhost:3000";
 
 const lib = new Library(masterEndpoint);
-testingEnv();
+
+if (process.env.MODE === "testing") {
+  let master = new Master();
+  let slaves = [];
+  for (let i = 0; i < 6; i++) {
+    slaves.push(new Slave(process.env.MASTER || "http://localhost:3000", true));
+  }
+}
 
 function generateRandom(m: number, n: number) {
   const mat: number[][] = [];
@@ -19,8 +27,6 @@ function generateRandom(m: number, n: number) {
   }
   return mat;
 }
-const __init_slave__ = (time: number=10) =>
-  new Promise((resolve) => setTimeout(resolve, time));
 
 class Job {
   @lib.exec
@@ -39,7 +45,7 @@ class Job {
   @lib.exec
   static arrayMult(x: number[], y: number[]): any {
     let ans = [];
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < x.length; i++) {
       ans.push(x[i] * y[i]);
     }
     return ans;
@@ -102,23 +108,11 @@ describe("Simple Math Test", () => {
     assert.deepStrictEqual(res.result, [10, 22, 36, 52, 70, 90, 112, 136, 162]);
   });
   it("Parallel Matrix Mul", async () => {
-    // let mat1 = [
-    //   [1, 2, 3],
-    //   [4, 5, 6],
-    //   [7, 8, 9],
-    // ];
-    // let mat2 = [
-    //   [10, 11, 12],
-    //   [13, 14, 15],
-    //   [16, 17, 18],
-    // ];
-
     let mat1 = generateRandom(3, 3);
     let mat2 = generateRandom(3, 3);
-    
+
+    const expected = await Job.matMul(mat1, mat2);
     let ans: Promise<SlaveResponse>[] = [];
-    let t1 = performance.now();
-    await __init_slave__(200);
 
     for (let i = 0; i < mat1.length; i++) {
       for (let j = 0; j < mat2[0].length; j++) {
@@ -127,39 +121,29 @@ describe("Simple Math Test", () => {
     }
 
     let x = await Promise.all(ans);
-    let t2 = performance.now();
-    console.log(`Parallel: ${t2 - t1} ms`);
+
     x = x.map((x: SlaveResponse) => x.result);
-    // console.log(x);
-    //assert.deepStrictEqual(x, [84, 90, 96, 201, 216, 231, 318, 342, 366]);
+    
+    assert.deepStrictEqual(x, [].concat(...expected.result));
   });
   it("Matrix Multiplication", async () => {
-    // let mat1 = [
-    //   [1, 2, 3],
-    //   [4, 5, 6],
-    //   [7, 8, 9],
-    // ];
-    // let mat2 = [
-    //   [10, 11, 12],
-    //   [13, 14, 15],
-    //   [16, 17, 18],
-    // ];
+    let mat1 = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    let mat2 = [
+      [10, 11, 12],
+      [13, 14, 15],
+      [16, 17, 18],
+    ];
 
-    let mat1 = generateRandom(3, 3);
-    let mat2 = generateRandom(3, 3);
-
-    let t1 = performance.now();
-    await __init_slave__(300);
     const res: SlaveResponse = await Job.matMul(mat1, mat2);
-    let t2 = performance.now();
-    console.log(`Sequential: ${t2 - t1}ms`);
 
-    // console.log(res.result);
-
-    // assert.deepStrictEqual(res.result, [
-    //   [84, 90, 96],
-    //   [201, 216, 231],
-    //   [318, 342, 366],
-    // ]);
+    assert.deepStrictEqual(res.result, [
+      [84, 90, 96],
+      [201, 216, 231],
+      [318, 342, 366],
+    ]);
   });
 });
