@@ -2,7 +2,7 @@
 
 ## `DistrIbuted Code ExecutoR`
 
-- Javascript Library to easily parallelize your code and execute it
+- Javascript Library to easily distribute your code among nodes and execute it
 - Master Slave architecture
 - Job distribution via ronund robin
 - Low latency transfer via sockets.
@@ -13,7 +13,7 @@
 - You need a `Master` server setup with at least `1` slave connected to it
 - The slaves need not be accessible publicly and can be behind a firewall or NAT
 - The master should be accessible by the client
-- Your parallelizable jobs must be defined in a class
+- Your jobs to distribute must be defined in a class
 
 ## Setup
 
@@ -108,3 +108,7 @@ if (res3.error) {
   //error handling goes here
 }
 ```
+
+## Examples
+
+- See [index.test.ts](./src/test/index.test.ts) for examples
