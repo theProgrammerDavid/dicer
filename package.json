@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/theProgrammerDavid/hpc-project#readme",
   "dependencies": {
-    "nanoid": "^3.1.22",
+    "nanoid": "^3.1.31",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1"
   },
